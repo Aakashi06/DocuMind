@@ -1,0 +1,5 @@
+{
+  "name": "DocuMind - AI PDF Assistant",
+  "description": "A sophisticated PDF Question-Answering system that extracts text, chunks data, and uses semantic search with Gemini to provide cited answers from documents.",
+  "requestFramePermissions": []
+}
