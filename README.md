@@ -2,7 +2,7 @@
 
 DocuMind is an AI-powered PDF intelligence system that transforms static PDF documents into dynamic, queryable knowledge bases using Retrieval-Augmented Generation (RAG) architecture and Google's Gemini 1.5 Flash model. It operates entirely client-side for complete data privacy, enabling users to upload PDFs, generate multi-faceted executive summaries, and perform natural language question-answering with verifiable page-level citations.
 
-## ✨ Key Features
+##  Key Features
 
 - **🧠 Intelligent Document Summarization**  
   Generates structured executive briefings covering core themes, critical takeaways, and document significance.
@@ -19,7 +19,7 @@ DocuMind is an AI-powered PDF intelligence system that transforms static PDF doc
 - **📱 Responsive UI**  
   Sidebar layout with chat interface, real-time progress indicators, and mobile-friendly design.
 
-## 🖼️ Demo Screenshots
+## Demo Screenshots
 
 | Landing Page | Processing | Executive Summary |
 |--------------|------------|-------------------|
@@ -38,7 +38,7 @@ DocuMind is an AI-powered PDF intelligence system that transforms static PDF doc
 | **PDF Processing** | PDF.js (client-side parsing) |
 | **Icons** | Lucide React |
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 - Node.js 18+
@@ -62,18 +62,17 @@ npm run dev
 Build for Production
 bash
 npm run build
-📖 Usage
+#
+
+### Usage
 Upload any PDF document
 
 View auto-generated executive summary with 4 pillars:
 
-📋 Comprehensive Overview
-
-🎯 Core Themes & Concepts
-
-💡 Critical Takeaways
-
-🌟 Document Significance
+-Comprehensive Overview
+-Core Themes & Concepts
+-Critical Takeaways
+-Document Significance
 
 Ask questions in natural language:
 "What are the main findings?"
@@ -84,7 +83,7 @@ Hover citations (Page X) for source context
 
 Switch to keyword search for exact phrase matching
 
-🏗️ Architecture Overview
+Architecture Overview
 text
 PDF Upload → PDF.js Parsing → Text Extraction → Chunking (800 words + 150 overlap)
                     ↓
@@ -101,7 +100,7 @@ SummaryDisplay.tsx - Multi-pillar executive briefing
 
 DocumentSidebar.tsx - Search & metadata panel
 
-🔮 Future Enhancements
+Future Enhancements
  Persistence: IndexedDB for documents & chat history
 
  Multimodal: Image/chart analysis via Gemini vision
@@ -119,7 +118,7 @@ Zhang et al., "Optimal chunking strategies for RAG systems" (2023)
 
 Google Gemini 1.5 Flash documentation
 
-🤝 Contributing
+Contributing
 Fork the project
 
 Create your feature branch (git checkout -b feature/AmazingFeature)
@@ -130,7 +129,6 @@ Push to the branch (git push origin feature/AmazingFeature)
 
 Open a Pull Request
 
-📄 License
-MIT License - see LICENSE file.
+
 
 Built with ❤️ for efficient document intelligence
