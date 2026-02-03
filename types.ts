@@ -30,3 +30,9 @@ export interface ProcessingState {
   progress: number;
   message?: string;
 }
+
+export interface SearchResult {
+  pageNumber: number;
+  snippet: string;
+  matchIndex: number;
+}

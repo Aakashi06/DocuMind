@@ -1,6 +1,6 @@
 
 import * as pdfjsLib from 'pdfjs-dist';
-import { PdfPage, TextChunk } from '../types';
+import { PdfPage, TextChunk, SearchResult } from '../types';
 
 // Set the worker source to the matching version from a reliable CDN
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.min.mjs`;
@@ -79,4 +79,38 @@ export function chunkText(pages: PdfPage[], chunkSize: number = 800, overlap: nu
   });
 
   return chunks;
+}
+
+/**
+ * Searches for a query string within the pages and returns a list of snippets.
+ */
+export function searchDocument(query: string, pages: PdfPage[]): SearchResult[] {
+  if (!query.trim()) return [];
+  
+  const results: SearchResult[] = [];
+  const searchRegex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+  const SNIPPET_PADDING = 60;
+
+  pages.forEach(page => {
+    let match;
+    while ((match = searchRegex.exec(page.text)) !== null) {
+      const start = Math.max(0, match.index - SNIPPET_PADDING);
+      const end = Math.min(page.text.length, match.index + query.length + SNIPPET_PADDING);
+      
+      let snippet = page.text.substring(start, end);
+      if (start > 0) snippet = '...' + snippet;
+      if (end < page.text.length) snippet = snippet + '...';
+
+      results.push({
+        pageNumber: page.pageNumber,
+        snippet: snippet,
+        matchIndex: match.index
+      });
+
+      // Limit results per page to avoid spamming
+      if (results.filter(r => r.pageNumber === page.pageNumber).length > 5) break;
+    }
+  });
+
+  return results;
 }
