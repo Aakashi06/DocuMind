@@ -1,5 +1,5 @@
 
-export interface PdfPage {
+export interface DocumentPage {
   pageNumber: number;
   text: string;
 }

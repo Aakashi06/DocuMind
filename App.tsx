@@ -3,14 +3,14 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Layout } from './components/ui/Layout';
 import { FileUploader } from './components/FileUploader';
 import { ChatWindow } from './components/ChatWindow';
-import { extractTextFromPdf, chunkText, searchDocument } from './services/pdfService';
+import { extractTextFromFile, chunkText, searchDocument } from './services/documentService';
 import { retrieveRelevantChunks, getAnswerFromGemini, summarizeDocument } from './services/geminiService';
-import { PdfPage, TextChunk, Message, ProcessingState, SearchResult } from './types';
-import { BookOpen, HelpCircle, FileSearch, Trash2, Info, Bot, Sparkles, Search, X, LayoutDashboard } from 'lucide-react';
+import { DocumentPage, TextChunk, Message, ProcessingState, SearchResult } from './types';
+import { BookOpen, HelpCircle, FileSearch, Trash2, Info, Bot, Sparkles, Search, X, LayoutDashboard, FileText } from 'lucide-react';
 
 const App: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
-  const [pages, setPages] = useState<PdfPage[]>([]);
+  const [pages, setPages] = useState<DocumentPage[]>([]);
   const [chunks, setChunks] = useState<TextChunk[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [processing, setProcessing] = useState<ProcessingState>({ status: 'idle', progress: 0 });
@@ -27,20 +27,20 @@ const App: React.FC = () => {
   const handleFileSelect = async (selectedFile: File) => {
     try {
       setFile(selectedFile);
-      setProcessing({ status: 'extracting', progress: 10, message: 'Reading PDF layers...' });
+      setProcessing({ status: 'extracting', progress: 10, message: 'Processing document layers...' });
       
-      const extractedPages = await extractTextFromPdf(selectedFile);
+      const extractedPages = await extractTextFromFile(selectedFile);
       setPages(extractedPages);
 
       if (extractedPages.length === 0) {
-        throw new Error("The PDF appears to have no pages or is unreadable.");
+        throw new Error("The document appears to have no text or is unreadable.");
       }
       
-      setProcessing({ status: 'chunking', progress: 40, message: 'Segmenting text for analysis...' });
+      setProcessing({ status: 'chunking', progress: 40, message: 'Analyzing semantic structure...' });
       const textChunks = chunkText(extractedPages);
       setChunks(textChunks);
       
-      setProcessing({ status: 'indexing', progress: 70, message: 'Generating document summary...' });
+      setProcessing({ status: 'indexing', progress: 70, message: 'Synthesizing initial overview...' });
       
       const fullText = extractedPages.map(p => p.text).join(' ');
       
@@ -52,7 +52,7 @@ const App: React.FC = () => {
       const summaryMsg: Message = {
         id: 'initial-summary',
         role: 'assistant',
-        content: `### Document Summary\n\n${summary}`,
+        content: `### Document Briefing\n\n${summary}`,
         timestamp: Date.now(),
         isLoading: false
       };
@@ -61,7 +61,7 @@ const App: React.FC = () => {
       setProcessing({ status: 'ready', progress: 100 });
 
     } catch (error) {
-      console.error('Error processing PDF:', error);
+      console.error('Error processing file:', error);
       setProcessing({ 
         status: 'error', 
         progress: 0, 
@@ -132,7 +132,7 @@ const App: React.FC = () => {
           </div>
           <div>
             <h1 className="text-lg font-bold text-gray-900 leading-tight">DocuMind</h1>
-            <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Research AI</p>
+            <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Universal Research AI</p>
           </div>
         </div>
 
@@ -167,13 +167,13 @@ const App: React.FC = () => {
                 <div className="flex items-start justify-between relative z-10">
                   <div className="flex items-center gap-3 overflow-hidden">
                     <div className="bg-white p-2 rounded-lg shadow-sm">
-                      <FileSearch className="w-4 h-4 text-indigo-600 shrink-0" />
+                      <FileText className="w-4 h-4 text-indigo-600 shrink-0" />
                     </div>
                     <div className="overflow-hidden">
                       <p className="text-sm font-bold text-indigo-900 truncate" title={file.name}>
                         {file.name}
                       </p>
-                      <p className="text-[10px] text-indigo-500 font-medium uppercase">{pages.length} Pages Loaded</p>
+                      <p className="text-[10px] text-indigo-500 font-medium uppercase">{pages.length > 1 ? `${pages.length} Pages` : 'Single Source'} Loaded</p>
                     </div>
                   </div>
                 </div>
@@ -182,7 +182,7 @@ const App: React.FC = () => {
                   className="mt-4 w-full flex items-center justify-center gap-2 py-2 text-xs font-semibold text-red-600 bg-white border border-red-100 rounded-lg hover:bg-red-50 transition-colors shadow-sm"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                  Discard Document
+                  Discard File
                 </button>
               </div>
             )}
@@ -202,20 +202,20 @@ const App: React.FC = () => {
             <div>
               <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <HelpCircle className="w-3.5 h-3.5" />
-                Quick Actions
+                Contextual Queries
               </h3>
               <ul className="text-xs text-gray-600 space-y-4 pl-1 leading-relaxed">
                 <li className="flex gap-2">
                   <span className="text-indigo-500 font-bold">•</span>
-                  <span>"Summarize the main argument"</span>
+                  <span>"Summarize the key findings"</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-indigo-500 font-bold">•</span>
-                  <span>"What are the key dates mentioned?"</span>
+                  <span>"Extract all dates and events"</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-indigo-500 font-bold">•</span>
-                  <span>"Explain the technical concepts on page 3"</span>
+                  <span>"What are the main risks mentioned?"</span>
                 </li>
               </ul>
             </div>
@@ -225,7 +225,7 @@ const App: React.FC = () => {
             <div className="relative">
               <input 
                 type="text" 
-                placeholder="Find specific text..."
+                placeholder="Find specific terminology..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 pl-10 pr-4 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
@@ -245,13 +245,13 @@ const App: React.FC = () => {
               {searchTerm ? (
                 <>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">
-                    {searchResults.length} Matches Found
+                    {searchResults.length} Direct Matches
                   </p>
                   <div className="space-y-3">
                     {searchResults.map((result, idx) => (
                       <div key={idx} className="bg-white border border-gray-100 rounded-xl p-3 shadow-sm hover:border-indigo-200 transition-colors group">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded uppercase">Page {result.pageNumber}</span>
+                          <span className="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded uppercase">Context {result.pageNumber}</span>
                           <Sparkles className="w-3 h-3 text-indigo-300 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                         <p 
@@ -269,9 +269,9 @@ const App: React.FC = () => {
                   <div className="bg-gray-50 p-4 rounded-full mb-4">
                     <Search className="w-8 h-8 text-gray-300" />
                   </div>
-                  <h4 className="text-sm font-bold text-gray-800">Search Keywords</h4>
+                  <h4 className="text-sm font-bold text-gray-800">Deep Keyword Search</h4>
                   <p className="text-xs text-gray-400 mt-2 px-8">
-                    Type a phrase above to find every exact occurrence across the document.
+                    Scan for exact phrase matches across all document layers.
                   </p>
                 </div>
               )}
@@ -287,10 +287,10 @@ const App: React.FC = () => {
           </div>
           <div className="flex items-center gap-2 mb-2 relative z-10">
             <Sparkles className="w-4 h-4 text-indigo-200" />
-            <p className="text-[10px] font-bold uppercase tracking-wider">Expert Context</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider">Multi-Format Hub</p>
           </div>
           <p className="text-[11px] leading-relaxed opacity-90 relative z-10">
-            Switch between high-level summaries and deep-dive keyword searching.
+            Analyzing PDF, DOCX, and TXT with unified RAG context.
           </p>
         </div>
       </div>
@@ -311,14 +311,14 @@ const App: React.FC = () => {
             <div className="text-center mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest mb-6 border border-indigo-100">
                 <Sparkles className="w-3 h-3" />
-                DocuMind Analysis
+                Universal DocuMind
               </div>
               <h2 className="text-4xl font-black text-gray-900 tracking-tight sm:text-5xl">
-                Unlock your documents.
+                Unlock any document.
               </h2>
               <p className="mt-6 text-lg text-gray-500 leading-relaxed font-medium">
-                Upload any PDF to get an instant AI-powered summary and start a 
-                conversation with your data.
+                Upload PDFs, Word docs, or Text files. Get instant summaries and ask 
+                anything with cited evidence.
               </p>
             </div>
             
@@ -334,18 +334,18 @@ const App: React.FC = () => {
             <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
               <BenefitItem 
                 icon={<FileSearch className="w-6 h-6" />}
-                title="Deep Scan"
-                description="We process every word for context-aware retrieval."
+                title="Universal Scan"
+                description="Native support for PDF, DOCX, and Text extraction."
               />
               <BenefitItem 
                 icon={<Bot className="w-6 h-6" />}
-                title="Smart Summary"
-                description="Get an instant overview of even the longest docs."
+                title="Instant Insights"
+                description="Briefings generated automatically for all file types."
               />
               <BenefitItem 
                 icon={<BookOpen className="w-6 h-6" />}
-                title="Verified"
-                description="Citations for every claim, linked to exact pages."
+                title="Verified Source"
+                description="Every answer is mapped back to the source text."
               />
             </div>
           </div>

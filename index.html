@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DocuMind - AI PDF Assistant</title>
+  <title>DocuMind - AI Document Assistant</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   <style>
@@ -13,6 +13,7 @@
     ::-webkit-scrollbar-track { background: #f1f1f1; }
     ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #555; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
   </style>
 <script type="importmap">
 {
@@ -23,7 +24,8 @@
     "@google/genai": "https://esm.sh/@google/genai@^1.39.0",
     "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
     "pdfjs-dist": "https://esm.sh/pdfjs-dist@4.3.136",
-    "pdfjs-dist/": "https://esm.sh/pdfjs-dist@4.3.136/"
+    "pdfjs-dist/": "https://esm.sh/pdfjs-dist@4.3.136/",
+    "mammoth": "https://esm.sh/mammoth@1.8.0"
   }
 }
 </script>
