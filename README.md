@@ -1,123 +1,146 @@
-**Here's the clean Markdown version** perfect for your GitHub repository's `README.md`:
-
-```markdown
 # DocuMind
 
-**Client-side AI-Powered Document Intelligence**  
-Upload PDFs, DOCX, or TXT files and instantly chat with your documents using **Gemini + RAG** — all running in your browser.
+**Client-side, browser-based AI-powered document intelligence application**
 
-![DocuMind](https://via.placeholder.com/800x400/3b82f6/ffffff?text=DocuMind+Screenshot)
+Upload PDFs, DOCX, or TXT files and instantly chat with your documents using Retrieval-Augmented Generation (RAG) powered by Google's Gemini model.
 
-## ✨ Features
+---
 
-- **Multi-format Support**: PDF (pdf.js), DOCX (mammoth), TXT
-- **Automatic Summarization** using Google Gemini
-- **Conversational Q&A** with source citations (RAG)
-- **Client-side Keyword Search** with highlighting
-- **Semantic Chunking** for better context understanding
-- **Modern, Clean UI** with sidebar (Overview + Search)
-- **Progress tracking** and one-click reset
-- **Zero Backend** — Maximum privacy
+## Overview
 
-## 🎯 Problem It Solves
+### Problem Statement
+Users struggle to quickly understand, search, and extract insights from long, dense documents such as research papers, reports, contracts, and manuals.
 
-Long documents (research papers, contracts, reports, manuals) are hard to digest quickly. Traditional search is imprecise and lacks understanding. DocuMind gives you an intelligent conversational interface over any document.
+### Objective
+Provide an instant, conversational interface over any document with accurate, source-cited answers and summaries — all running primarily in the browser with minimal backend.
 
-## 🛠 Tech Stack
+### Target Users
+- Researchers and students
+- Legal and professional analysts
+- Knowledge workers handling reports and contracts
+- Anyone needing rapid insight from documents
 
-| Layer                | Technology                          |
-|----------------------|-------------------------------------|
-| **Frontend**         | React 19 + TypeScript, Vite         |
-| **Styling**          | Tailwind CSS                        |
-| **Icons**            | Lucide React                        |
-| **PDF Processing**   | pdfjs-dist                          |
-| **DOCX Processing**  | mammoth                             |
-| **AI**               | @google/genai (Gemini)              |
-| **Architecture**     | Client-side RAG                     |
+---
 
-## 📁 Project Structure
+## Key Features
+
+- Multi-format document support (PDF, DOCX, TXT)
+- Automatic text extraction and semantic chunking
+- AI-generated document summary using Gemini
+- Real-time conversational Q&A with citations
+- Client-side keyword search with highlighting
+- Modern, polished UI with sidebar navigation
+- Progress tracking during processing
+- One-click file discard and reset
+
+---
+
+## Tech Stack
+
+| Category              | Technology                          | Purpose |
+|-----------------------|-------------------------------------|---------|
+| Frontend              | React 19 + TypeScript               | UI framework |
+| Build Tool            | Vite                                | Fast development and bundling |
+| Styling               | Tailwind CSS                        | Utility-first styling |
+| Icons                 | Lucide React                        | Lightweight icons |
+| PDF Processing        | pdfjs-dist                          | Text extraction from PDFs |
+| DOCX Processing       | mammoth                             | DOCX to text conversion |
+| AI Integration        | @google/genai                       | Gemini model access |
+| Architecture          | Client-side RAG                     | Privacy-first design |
+
+---
+
+## Project Structure
 
 ```bash
 /
-├── App.tsx                     # Main container & state management
+├── App.tsx                    # Main container and state orchestration
+├── index.tsx                  # React root
+├── index.html                 # Entry point with Tailwind CDN
+├── types.ts                   # TypeScript interfaces
+├── vite.config.ts             # Vite configuration
 ├── components/
+│   ├── ui/
 │   ├── FileUploader.tsx
-│   ├── ChatWindow.tsx
-│   └── ui/Layout.tsx
+│   └── ChatWindow.tsx
 ├── services/
-│   ├── documentService.ts      # Extraction, chunking, search
-│   └── geminiService.ts        # RAG + Gemini calls
-├── types.ts                    # TypeScript interfaces
-├── vite.config.ts
-└── index.html                  # Tailwind CDN
-```
-
-## 🚀 How It Works
-
-1. Upload a document → Text extraction + intelligent chunking
-2. Gemini generates initial document summary/briefing
-3. Ask questions in natural language
-4. **RAG pipeline**: Retrieve relevant chunks → Send to Gemini → Answer with citations
-5. Sidebar keyword search with live highlighting
-
-## 🧠 Architecture
-
-```mermaid
-graph TD
-    A[User] --> B[React UI]
-    B --> C[File Upload]
-    C --> D[Document Service]
-    D --> E[Pages + Chunks]
-    B --> F[Chat Interface]
-    F --> G[Gemini Service]
-    G --> H[Gemini API]
-    E --> G
-    B --> I[Client-side Search]
-```
-
-## 🔑 Key Concepts
-
-- **Chunking**: Breaks documents into manageable semantic pieces
-- **RAG (Retrieval-Augmented Generation)**: Grounds LLM responses in your document
-- **Client-side Processing**: Documents never leave your browser
-- **Hybrid Search**: Keyword + Semantic retrieval
-
-## 🚧 Limitations
-
-- Browser memory limits for very large documents
-- Gemini API rate limits
-- No persistent storage (in-memory only)
-
-## 🔮 Future Improvements
-
-- Client-side vector embeddings (`@xenova/transformers`)
-- Web Workers for better performance
-- Multi-document chat
-- Voice input/output
-- PWA support
-- Export conversations & citations
-
-## 🧪 Ideal For
-
-- Researchers & Students
-- Legal & Compliance Teams
-- Knowledge Workers
-- Anyone who works with dense documents
-
----
-
-**DocuMind** — *Your personal AI document assistant that actually reads and understands your files.*
-
-Made with ❤️ using React, TypeScript & Gemini.
+│   ├── documentService.ts     # Text extraction, chunking, search
+│   └── geminiService.ts       # RAG logic and Gemini API calls
+├── README.md
+└── package.json
 ```
 
 ---
 
-**How to use:**
+## Execution Flow
 
-1. Copy everything above
-2. Create `README.md` in your project root
-3. Paste it
-4. (Optional) Replace the placeholder image with a real screenshot
+1. User uploads a file
+2. Text extraction using appropriate parser (PDF/DOCX/TXT)
+3. Document is chunked into semantic units with metadata
+4. Initial document summary generated by Gemini
+5. User asks questions in chat
+6. Relevant chunks are retrieved and sent to Gemini for answer generation with citations
+7. Sidebar provides fast keyword-based search with highlighting
 
-Would you like a version with badges, installation instructions, or deployment guide added?
+---
+
+## Architecture
+
+**Client-Side RAG Monolith**
+
+- All processing happens in the browser
+- Documents never leave the user's device
+- Uses in-memory state management (`useState`)
+- Hybrid search: keyword (sidebar) + semantic (RAG)
+
+### Core Components
+- `documentService.ts` — Handles parsing, chunking, and search
+- `geminiService.ts` — Manages retrieval and LLM interactions
+- `App.tsx` — Central state machine and UI orchestration
+
+---
+
+## AI Concepts Used
+
+- **Chunking**: Splits documents to fit LLM context windows
+- **RAG (Retrieval-Augmented Generation)**: Retrieves relevant context before generating responses
+- **Prompt Engineering**: Structured prompts with context and citation instructions
+- **Context Window Management**: Critical for handling long documents
+
+---
+
+## Limitations
+
+- Browser memory constraints for very large documents
+- No persistent storage across sessions
+- Subject to Gemini API rate limits
+- Depends on client device performance
+
+---
+
+## Future Enhancements
+
+### Performance & Scalability
+- Client-side vector embeddings using Transformers.js
+- Web Workers for heavy processing tasks
+- Lazy loading and pagination
+
+### New Features
+- Multi-document knowledge base
+- Export conversations and citations
+- Voice input and output support
+- Highlight citations directly in document viewer
+- PWA support for offline access
+
+---
+
+## Summary
+
+**DocuMind** is a production-grade foundation for a modern document AI tool built entirely client-side. It demonstrates strong full-stack reasoning, modern React architecture, and practical application of RAG patterns without requiring a backend.
+
+**Perfect for:**
+- College presentations
+- Portfolio projects
+- Technical interviews
+- Personal and professional document workflows
+
